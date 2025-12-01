@@ -1,4 +1,4 @@
-package com.example.app_services_example
+package com.zaim.ru.good.cash
 
 import io.flutter.embedding.android.FlutterActivity
 

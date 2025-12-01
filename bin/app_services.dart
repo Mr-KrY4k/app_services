@@ -2,6 +2,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:gms_services/gms_services_setup.dart' as gms;
 import 'package:hms_services/hms_services_setup.dart' as hms;
@@ -56,6 +57,15 @@ Future<void> _installGms() async {
     exit(1);
   }
 
+  final templatesOk = await _ensureAppServicesTemplates(
+    selected: _Plugin.gms,
+    projectRoot: Directory.current.path,
+  );
+  if (!templatesOk) {
+    print('\n❌ Не удалось скопировать шаблоны app_services для GMS.');
+    exit(1);
+  }
+
   final pubspecOk = _updatePubspecFor(
     selected: _Plugin.gms,
     projectRoot: Directory.current.path,
@@ -84,6 +94,15 @@ Future<void> _installHms() async {
   final cleanupOk = await _runCleanupAll();
   if (!cleanupOk) {
     print('\n❌ Установка HMS прервана из‑за ошибок при удалении настроек.');
+    exit(1);
+  }
+
+  final templatesOk = await _ensureAppServicesTemplates(
+    selected: _Plugin.hms,
+    projectRoot: Directory.current.path,
+  );
+  if (!templatesOk) {
+    print('\n❌ Не удалось скопировать шаблоны app_services для HMS.');
     exit(1);
   }
 
@@ -121,11 +140,28 @@ Future<void> _cleanupOnly() async {
     projectRoot: Directory.current.path,
   );
   if (!pubspecOk) {
-    print('\n❌ Не удалось удалить зависимости gms_services/hms_services из pubspec.yaml.');
+    print(
+      '\n❌ Не удалось удалить зависимости gms_services/hms_services из '
+      'pubspec.yaml.',
+    );
     exit(1);
   }
 
-  print('\n✅ Удаление настроек GMS и HMS завершено, зависимости из pubspec.yaml удалены.');
+  final templatesOk = _removeAppServicesTemplates(
+    projectRoot: Directory.current.path,
+  );
+  if (!templatesOk) {
+    print(
+      '\n❌ Не удалось удалить шаблоны lib/app_services, проверьте проект '
+      'вручную.',
+    );
+    exit(1);
+  }
+
+  print(
+    '\n✅ Удаление настроек GMS и HMS завершено, зависимости и файлы '
+    'lib/app_services удалены.',
+  );
 }
 
 Future<bool> _runCleanupAll() async {
@@ -162,6 +198,141 @@ bool _isResultOk(dynamic result) {
 }
 
 enum _Plugin { gms, hms }
+
+Future<bool> _ensureAppServicesTemplates({
+  required _Plugin selected,
+  required String projectRoot,
+}) async {
+  try {
+    final libDir = Directory('$projectRoot/lib/app_services');
+    if (!libDir.existsSync()) {
+      libDir.createSync(recursive: true);
+    }
+
+    // Общие файлы
+    await _copyTemplate(
+      packagePath: 'templates/common/messaging_api.dart',
+      projectPath: '${libDir.path}/messaging_api.dart',
+    );
+    await _copyTemplate(
+      packagePath: 'templates/common/ads_api.dart',
+      projectPath: '${libDir.path}/ads_api.dart',
+    );
+    await _copyTemplate(
+      packagePath: 'templates/common/app_services.dart',
+      projectPath: '${libDir.path}/app_services.dart',
+    );
+    await _copyTemplate(
+      packagePath: 'templates/common/analytics_api.dart',
+      projectPath: '${libDir.path}/analytics_api.dart',
+    );
+    await _copyTemplate(
+      packagePath: 'templates/common/remote_config_api.dart',
+      projectPath: '${libDir.path}/remote_config_api.dart',
+    );
+
+    // Провайдер‑специфичные файлы
+    switch (selected) {
+      case _Plugin.gms:
+        await _copyTemplate(
+          packagePath: 'templates/gms/provider_bootstrap.dart',
+          projectPath: '${libDir.path}/provider_bootstrap.dart',
+        );
+        await _copyTemplate(
+          packagePath: 'templates/gms/gms_messaging_adapter.dart',
+          projectPath: '${libDir.path}/gms_messaging_adapter.dart',
+        );
+        await _copyTemplate(
+          packagePath: 'templates/gms/gms_ads_adapter.dart',
+          projectPath: '${libDir.path}/gms_ads_adapter.dart',
+        );
+        await _copyTemplate(
+          packagePath: 'templates/gms/gms_analytics_adapter.dart',
+          projectPath: '${libDir.path}/gms_analytics_adapter.dart',
+        );
+        await _copyTemplate(
+          packagePath: 'templates/gms/gms_remote_config_adapter.dart',
+          projectPath: '${libDir.path}/gms_remote_config_adapter.dart',
+        );
+
+        // Пробуем удалить HMS‑файлы, если они были созданы ранее.
+        for (final name in [
+          'hms_messaging_adapter.dart',
+          'hms_ads_adapter.dart',
+          'hms_analytics_adapter.dart',
+          'hms_remote_config_adapter.dart',
+        ]) {
+          final f = File('${libDir.path}/$name');
+          if (f.existsSync()) {
+            f.deleteSync();
+          }
+        }
+      case _Plugin.hms:
+        await _copyTemplate(
+          packagePath: 'templates/hms/provider_bootstrap.dart',
+          projectPath: '${libDir.path}/provider_bootstrap.dart',
+        );
+        await _copyTemplate(
+          packagePath: 'templates/hms/hms_messaging_adapter.dart',
+          projectPath: '${libDir.path}/hms_messaging_adapter.dart',
+        );
+        await _copyTemplate(
+          packagePath: 'templates/hms/hms_ads_adapter.dart',
+          projectPath: '${libDir.path}/hms_ads_adapter.dart',
+        );
+        await _copyTemplate(
+          packagePath: 'templates/hms/hms_analytics_adapter.dart',
+          projectPath: '${libDir.path}/hms_analytics_adapter.dart',
+        );
+        await _copyTemplate(
+          packagePath: 'templates/hms/hms_remote_config_adapter.dart',
+          projectPath: '${libDir.path}/hms_remote_config_adapter.dart',
+        );
+
+        // Пробуем удалить GMS‑файлы, если они были созданы ранее.
+        for (final name in [
+          'gms_messaging_adapter.dart',
+          'gms_ads_adapter.dart',
+          'gms_analytics_adapter.dart',
+          'gms_remote_config_adapter.dart',
+        ]) {
+          final f = File('${libDir.path}/$name');
+          if (f.existsSync()) {
+            f.deleteSync();
+          }
+        }
+    }
+
+    print('✅ Шаблоны app_services скопированы в lib/app_services.');
+    return true;
+  } catch (e) {
+    print('❌ Ошибка при копировании шаблонов app_services: $e');
+    return false;
+  }
+}
+
+Future<void> _copyTemplate({
+  required String packagePath,
+  required String projectPath,
+}) async {
+  final templateFile = await _resolvePackageFile(packagePath);
+  final targetFile = File(projectPath);
+
+  final content = await templateFile.readAsString();
+  await targetFile.writeAsString(content);
+}
+
+Future<File> _resolvePackageFile(String packageRelativePath) async {
+  final uri = await Isolate.resolvePackageUri(
+    Uri.parse('package:app_services/$packageRelativePath'),
+  );
+  if (uri == null) {
+    throw StateError(
+      'Не удалось найти ресурс в пакете app_services: $packageRelativePath',
+    );
+  }
+  return File.fromUri(uri);
+}
 
 bool _updatePubspecFor({
   required _Plugin selected,
@@ -284,5 +455,50 @@ bool _removePluginsFromPubspec({required String projectRoot}) {
   }
 }
 
+bool _removeAppServicesTemplates({required String projectRoot}) {
+  try {
+    final dir = Directory('$projectRoot/lib/app_services');
+    if (!dir.existsSync()) {
+      // Нечего удалять — считаем успехом.
+      return true;
+    }
 
+    // Удаляем только известные файлы, чтобы не сносить чужой код.
+    const knownFiles = <String>[
+      'messaging_api.dart',
+      'ads_api.dart',
+       'analytics_api.dart',
+       'remote_config_api.dart',
+      'app_services.dart',
+      'provider_bootstrap.dart',
+      'gms_messaging_adapter.dart',
+      'gms_ads_adapter.dart',
+       'gms_analytics_adapter.dart',
+       'gms_remote_config_adapter.dart',
+      'hms_messaging_adapter.dart',
+      'hms_ads_adapter.dart',
+       'hms_analytics_adapter.dart',
+       'hms_remote_config_adapter.dart',
+    ];
 
+    for (final name in knownFiles) {
+      final file = File('${dir.path}/$name');
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+    }
+
+    // Если после этого директория пустая — удаляем её.
+    final remaining =
+        dir.existsSync() ? dir.listSync().whereType<File>().toList() : [];
+    if (remaining.isEmpty) {
+      dir.deleteSync(recursive: true);
+    }
+
+    print('✅ Файлы lib/app_services очищены.');
+    return true;
+  } catch (e) {
+    print('❌ Ошибка при удалении файлов lib/app_services: $e');
+    return false;
+  }
+}
