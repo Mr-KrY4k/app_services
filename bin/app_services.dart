@@ -5,6 +5,8 @@ import 'dart:io';
 
 import 'package:gms_services/gms_services_setup.dart' as gms;
 import 'package:hms_services/hms_services_setup.dart' as hms;
+import 'package:yaml/yaml.dart';
+import 'package:yaml_edit/yaml_edit.dart';
 
 /// Основная функция CLI‑утилиты.
 ///
@@ -54,6 +56,15 @@ Future<void> _installGms() async {
     exit(1);
   }
 
+  final pubspecOk = _updatePubspecFor(
+    selected: _Plugin.gms,
+    projectRoot: Directory.current.path,
+  );
+  if (!pubspecOk) {
+    print('\n❌ Не удалось обновить pubspec.yaml для GMS.');
+    exit(1);
+  }
+
   print('\n🔧 Установка GMS...\n');
   final result = await gms.setupGmsServices();
   _printResult(result);
@@ -73,6 +84,15 @@ Future<void> _installHms() async {
   final cleanupOk = await _runCleanupAll();
   if (!cleanupOk) {
     print('\n❌ Установка HMS прервана из‑за ошибок при удалении настроек.');
+    exit(1);
+  }
+
+  final pubspecOk = _updatePubspecFor(
+    selected: _Plugin.hms,
+    projectRoot: Directory.current.path,
+  );
+  if (!pubspecOk) {
+    print('\n❌ Не удалось обновить pubspec.yaml для HMS.');
     exit(1);
   }
 
@@ -97,7 +117,15 @@ Future<void> _cleanupOnly() async {
     exit(1);
   }
 
-  print('\n✅ Удаление настроек GMS и HMS завершено.');
+  final pubspecOk = _removePluginsFromPubspec(
+    projectRoot: Directory.current.path,
+  );
+  if (!pubspecOk) {
+    print('\n❌ Не удалось удалить зависимости gms_services/hms_services из pubspec.yaml.');
+    exit(1);
+  }
+
+  print('\n✅ Удаление настроек GMS и HMS завершено, зависимости из pubspec.yaml удалены.');
 }
 
 Future<bool> _runCleanupAll() async {
@@ -132,5 +160,129 @@ bool _isResultOk(dynamic result) {
   // если изменений нет и при этом есть сообщение с ❌ — считаем, что это ошибка.
   return !(hasError && !changesMade);
 }
+
+enum _Plugin { gms, hms }
+
+bool _updatePubspecFor({
+  required _Plugin selected,
+  required String projectRoot,
+}) {
+  final file = File('$projectRoot/pubspec.yaml');
+  if (!file.existsSync()) {
+    print('⚠️  pubspec.yaml не найден в $projectRoot. Пропускаю обновление.');
+    return false;
+  }
+
+  try {
+    final content = file.readAsStringSync();
+    final editor = YamlEditor(content);
+    final doc = loadYaml(content);
+
+    const depsKey = 'dependencies';
+    Map deps;
+
+    if (doc is YamlMap && doc.containsKey(depsKey)) {
+      final rawDeps = doc[depsKey];
+      if (rawDeps is YamlMap) {
+        deps = Map.from(rawDeps);
+      } else if (rawDeps is Map) {
+        deps = Map.from(rawDeps);
+      } else {
+        deps = <String, Object?>{};
+      }
+    } else {
+      deps = <String, Object?>{};
+      editor.update([depsKey], deps);
+    }
+
+    final selectedName = switch (selected) {
+      _Plugin.gms => 'gms_services',
+      _Plugin.hms => 'hms_services',
+    };
+    final otherName = switch (selected) {
+      _Plugin.gms => 'hms_services',
+      _Plugin.hms => 'gms_services',
+    };
+
+    final selectedSpec = switch (selected) {
+      _Plugin.gms => {
+          'git': {
+            'url': 'https://github.com/Mr-KrY4k/gms_services.git',
+            'ref': 'dev',
+          },
+        },
+      _Plugin.hms => {
+          'git': {
+            'url': 'https://github.com/Mr-KrY4k/hms_services.git',
+            'ref': 'dev',
+          },
+        },
+    };
+
+    editor.update([depsKey, selectedName], selectedSpec);
+
+    try {
+      editor.remove([depsKey, otherName]);
+    } catch (_) {
+      // Если зависимости нет — просто игнорируем.
+    }
+
+    file.writeAsStringSync(editor.toString());
+
+    print(
+      '✅ pubspec.yaml обновлён: включён $selectedName, удалён $otherName (если был).',
+    );
+
+    return true;
+  } catch (e) {
+    print('❌ Ошибка при обновлении pubspec.yaml: $e');
+    return false;
+  }
+}
+
+bool _removePluginsFromPubspec({required String projectRoot}) {
+  final file = File('$projectRoot/pubspec.yaml');
+  if (!file.existsSync()) {
+    print('⚠️  pubspec.yaml не найден в $projectRoot. Пропускаю удаление зависимостей.');
+    return false;
+  }
+
+  try {
+    final content = file.readAsStringSync();
+    final editor = YamlEditor(content);
+    final doc = loadYaml(content);
+
+    const depsKey = 'dependencies';
+
+    if (doc is! YamlMap || !doc.containsKey(depsKey)) {
+      // Нет секции dependencies — считать, что удалять нечего.
+      return true;
+    }
+
+    var hadAny = false;
+
+    for (final name in ['gms_services', 'hms_services']) {
+      try {
+        editor.remove([depsKey, name]);
+        hadAny = true;
+      } catch (_) {
+        // Если зависимости нет — ничего страшного.
+      }
+    }
+
+    if (!hadAny) {
+      print('ℹ️  В pubspec.yaml уже нет зависимостей gms_services/hms_services.');
+      return true;
+    }
+
+    file.writeAsStringSync(editor.toString());
+    print('✅ Из pubspec.yaml удалены зависимости gms_services и hms_services.');
+    return true;
+  } catch (e) {
+    print('❌ Ошибка при удалении зависимостей из pubspec.yaml: $e');
+    return false;
+  }
+}
+
 
 

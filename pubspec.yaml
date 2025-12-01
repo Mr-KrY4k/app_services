@@ -11,6 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  yaml: ^3.1.2
+  yaml_edit: ^2.2.1
+
   hms_services:
     git:
       url: https://github.com/Mr-KrY4k/hms_services.git

@@ -73,6 +73,33 @@ dart run app_services
   - `cleanupGmsServices()` из `gms_services`.
 - Если при очистке возникают критичные ошибки (как в оригинальных
   bin‑скриптах этих пакетов), установка прерывается с кодом выхода `1`.
+ - При выборе GMS/HMS скрипт также **обновляет `pubspec.yaml`
+   текущего проекта**, включая только выбранный пакет:
+   - при установке GMS:
+     - добавляется зависимость `gms_services`:
+
+       ```yaml
+       dependencies:
+         gms_services:
+           git:
+             url: https://github.com/Mr-KrY4k/gms_services.git
+             ref: dev
+       ```
+
+     - зависимость `hms_services` удаляется, если была;
+
+   - при установке HMS:
+     - добавляется зависимость `hms_services`:
+
+       ```yaml
+       dependencies:
+         hms_services:
+           git:
+             url: https://github.com/Mr-KrY4k/hms_services.git
+             ref: dev
+       ```
+
+     - зависимость `gms_services` удаляется, если была.
 
 ### 1) Установка GMS
 
@@ -101,8 +128,10 @@ dart run app_services
 1. Запускается `cleanupHmsServices()`.
 2. Запускается `cleanupGmsServices()`.
 3. В консоль выводятся все сообщения обоих вызовов.
-4. При ошибках – код выхода `1`, при успехе – сообщение
-   «Удаление настроек GMS и HMS завершено.»
+4. Из `pubspec.yaml` текущего проекта удаляются зависимости
+   `gms_services` и `hms_services` (если были).
+5. При ошибках – код выхода `1`, при успехе – сообщение
+   «Удаление настроек GMS и HMS завершено, зависимости из pubspec.yaml удалены.»
 
 ### 4) Выход
 
