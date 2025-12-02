@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'app_services/app_services.dart';
+import 'gen/app_services/app_services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

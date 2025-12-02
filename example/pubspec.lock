@@ -250,7 +250,7 @@ packages:
     source: sdk
     version: "0.0.0"
   gms_services:
-    dependency: transitive
+    dependency: "direct main"
     description:
       path: "."
       ref: dev
@@ -267,7 +267,7 @@ packages:
     source: hosted
     version: "2.15.1"
   hms_services:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "."
       ref: dev

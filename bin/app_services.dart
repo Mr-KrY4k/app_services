@@ -204,7 +204,11 @@ Future<bool> _ensureAppServicesTemplates({
   required String projectRoot,
 }) async {
   try {
-    final libDir = Directory('$projectRoot/lib/app_services');
+    final genDir = Directory('$projectRoot/lib/gen');
+    if (!genDir.existsSync()) {
+      genDir.createSync(recursive: true);
+    }
+    final libDir = Directory('${genDir.path}/app_services');
     if (!libDir.existsSync()) {
       libDir.createSync(recursive: true);
     }
@@ -303,7 +307,7 @@ Future<bool> _ensureAppServicesTemplates({
         }
     }
 
-    print('✅ Шаблоны app_services скопированы в lib/app_services.');
+    print('✅ Шаблоны app_services скопированы в lib/gen/app_services.');
     return true;
   } catch (e) {
     print('❌ Ошибка при копировании шаблонов app_services: $e');
@@ -457,7 +461,7 @@ bool _removePluginsFromPubspec({required String projectRoot}) {
 
 bool _removeAppServicesTemplates({required String projectRoot}) {
   try {
-    final dir = Directory('$projectRoot/lib/app_services');
+    final dir = Directory('$projectRoot/lib/gen/app_services');
     if (!dir.existsSync()) {
       // Нечего удалять — считаем успехом.
       return true;
@@ -488,14 +492,22 @@ bool _removeAppServicesTemplates({required String projectRoot}) {
       }
     }
 
-    // Если после этого директория пустая — удаляем её.
-    final remaining =
+    // Если после этого директория пустая — удаляем её и, при необходимости,
+    // всю директорию lib/gen.
+    final remainingFiles =
         dir.existsSync() ? dir.listSync().whereType<File>().toList() : [];
-    if (remaining.isEmpty) {
+    if (remainingFiles.isEmpty && dir.existsSync()) {
       dir.deleteSync(recursive: true);
+
+      final genDir = Directory('$projectRoot/lib/gen');
+      final genRemaining =
+          genDir.existsSync() ? genDir.listSync().toList() : [];
+      if (genRemaining.isEmpty && genDir.existsSync()) {
+        genDir.deleteSync(recursive: true);
+      }
     }
 
-    print('✅ Файлы lib/app_services очищены.');
+    print('✅ Файлы lib/gen/app_services очищены.');
     return true;
   } catch (e) {
     print('❌ Ошибка при удалении файлов lib/app_services: $e');
