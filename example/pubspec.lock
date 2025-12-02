@@ -250,11 +250,11 @@ packages:
     source: sdk
     version: "0.0.0"
   gms_services:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "."
-      ref: dev
-      resolved-ref: "4885e00424404e12a3c87626d63412823a92769e"
+      ref: main
+      resolved-ref: d0462c5e9bf485fc46bfcf2ab3faf89706411614
       url: "https://github.com/Mr-KrY4k/gms_services.git"
     source: git
     version: "0.0.1"
@@ -270,7 +270,7 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: dev
+      ref: main
       resolved-ref: "9a3b62c8205a9aee170e5cea8dc8d1e2017b5213"
       url: "https://github.com/Mr-KrY4k/hms_services.git"
     source: git

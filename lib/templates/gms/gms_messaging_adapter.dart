@@ -1,8 +1,7 @@
 // ignore_for_file: uri_does_not_exist, implements_non_class, override_on_non_overriding_member
 
+import 'package:app_services/templates/common/messaging_api.dart';
 import 'package:gms_services/gms_services.dart';
-
-import 'messaging_api.dart';
 
 class GmsMessagingAdapter implements MessagingApi {
   @override
@@ -26,6 +25,12 @@ class GmsMessagingAdapter implements MessagingApi {
       .map((remoteMessage) => remoteMessage.toMap());
 
   @override
+  PushMessageStatus? get pushMessageStatus =>
+      PushMessageStatus.values.firstWhere(
+        (e) => e.name == GmsServices.instance.messaging.notificationStatus.name,
+      );
+
+  @override
   Future<bool> wasAppOpenedByPush() =>
       GmsServices.instance.messaging.wasAppOpenedByPush();
 
@@ -36,4 +41,11 @@ class GmsMessagingAdapter implements MessagingApi {
   @override
   Future<void> markLastOpenedPushAsViewed() =>
       GmsServices.instance.messaging.markLastOpenedPushAsViewed();
+
+  @override
+  Stream<PushMessageStatus> get onMessageStatus =>
+      GmsServices.instance.messaging.onNotificationStatusChanged.map(
+        (status) =>
+            PushMessageStatus.values.firstWhere((e) => e.name == status.name),
+      );
 }

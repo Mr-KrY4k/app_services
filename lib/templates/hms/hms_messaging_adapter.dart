@@ -1,8 +1,7 @@
 // ignore_for_file: uri_does_not_exist, implements_non_class, override_on_non_overriding_member, return_of_invalid_type
 
+import 'package:app_services/templates/common/messaging_api.dart';
 import 'package:hms_services/hms_services.dart';
-
-import 'messaging_api.dart';
 
 class HmsMessagingAdapter implements MessagingApi {
   @override
@@ -36,4 +35,17 @@ class HmsMessagingAdapter implements MessagingApi {
   @override
   Future<void> markLastOpenedPushAsViewed() =>
       HmsServices.instance.messaging.markLastOpenedPushAsViewed();
+
+  @override
+  Stream<PushMessageStatus> get onMessageStatus =>
+      HmsServices.instance.messaging.onNotificationStatusChanged.map(
+        (status) =>
+            PushMessageStatus.values.firstWhere((e) => e.name == status.name),
+      );
+
+  @override
+  PushMessageStatus? get pushMessageStatus =>
+      PushMessageStatus.values.firstWhere(
+        (e) => e.name == HmsServices.instance.messaging.notificationStatus.name,
+      );
 }
