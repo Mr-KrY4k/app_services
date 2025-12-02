@@ -53,4 +53,11 @@ class GmsMessagingAdapter implements MessagingApi {
   Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData async =>
       (await GmsServices.instance.messaging.getLastOpenedPushWithin24Hours())
           ?.toMap();
+
+  @override
+  Stream<Map<String, dynamic>> get onMessageReceived => GmsServices
+      .instance
+      .messaging
+      .onMessageReceived
+      .map((remoteMessage) => remoteMessage.toMap());
 }

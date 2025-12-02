@@ -52,4 +52,11 @@ class HmsMessagingAdapter implements MessagingApi {
   @override
   Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData async =>
       await HmsServices.instance.messaging.getLastOpenedPushWithin24Hours();
+
+  @override
+  Stream<Map<String, dynamic>> get onMessageReceived => HmsServices
+      .instance
+      .messaging
+      .onMessageReceived
+      .map((raw) => raw.map((key, value) => MapEntry(key.toString(), value)));
 }
