@@ -48,4 +48,9 @@ class GmsMessagingAdapter implements MessagingApi {
         (status) =>
             PushMessageStatus.values.firstWhere((e) => e.name == status.name),
       );
+
+  @override
+  Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData async =>
+      (await GmsServices.instance.messaging.getLastOpenedPushWithin24Hours())
+          ?.toMap();
 }

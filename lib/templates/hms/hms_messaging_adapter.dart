@@ -48,4 +48,8 @@ class HmsMessagingAdapter implements MessagingApi {
       PushMessageStatus.values.firstWhere(
         (e) => e.name == HmsServices.instance.messaging.notificationStatus.name,
       );
+
+  @override
+  Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData async =>
+      await HmsServices.instance.messaging.getLastOpenedPushWithin24Hours();
 }
