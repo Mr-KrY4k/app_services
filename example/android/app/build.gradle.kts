@@ -2,9 +2,8 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
-    // Плагины для gms_services:
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+    // Плагин для hms_services:
+    id("com.huawei.agconnect")
 }
 
 android {
@@ -41,6 +40,10 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android.txt"),
+                "proguard-rules.pro"
+            )
         }
         debug {
             signingConfig = signingConfigs.getByName("release")
@@ -54,7 +57,6 @@ flutter {
 }
 
 dependencies {
-    // Зависимости для gms_services:
-    implementation("com.google.android.gms:play-services-location:21.3.0")
+    // Зависимость для hms_services:
     implementation("com.android.installreferrer:installreferrer:2.2")
 }

@@ -13,14 +13,14 @@ class HmsMessagingAdapter implements MessagingApi {
   }
 
   @override
-  List<Map<String, dynamic>> get messages => HmsServices
-      .instance
-      .messaging
-      .messages
-      .map<Map<String, dynamic>>(
-        (raw) => raw.map((key, value) => MapEntry(key.toString(), value)),
-      )
-      .toList();
+  List<Map<String, dynamic>> get messages =>
+      HmsServices.instance.messaging.messages
+          .map<Map<String, dynamic>>(
+            (raw) => raw.map(
+              (key, value) => MapEntry(key.toString(), value),
+            ),
+          )
+          .toList();
 
   @override
   Stream<Map<String, dynamic>> get onMessage => HmsServices
@@ -72,12 +72,14 @@ class HmsMessagingAdapter implements MessagingApi {
 
   @override
   Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData async {
-    final raw = await HmsServices.instance.messaging
-        .getLastOpenedPushWithin24Hours();
+    final raw =
+        await HmsServices.instance.messaging.getLastOpenedPushWithin24Hours();
     if (raw == null) {
       return null;
     }
-    return raw.map((key, value) => MapEntry(key.toString(), value));
+    return raw.map(
+      (key, value) => MapEntry(key.toString(), value),
+    );
   }
 
   @override

@@ -1,7 +1,10 @@
-// ignore_for_file: uri_does_not_exist, implements_non_class, override_on_non_overriding_member
+// ignore_for_file: uri_does_not_exist, implements_non_class,
+// override_on_non_overriding_member, undefined_class,
+// undefined_identifier, non_type_as_type_argument, return_of_invalid_type
 
-import 'package:app_services/templates/common/messaging_api.dart';
 import 'package:gms_services/gms_services.dart';
+
+import 'messaging_api.dart';
 
 class GmsMessagingAdapter implements MessagingApi {
   @override

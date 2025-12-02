@@ -3,12 +3,35 @@ abstract class MessagingApi {
 
   Stream<Map<String, dynamic>> get onMessage;
 
+  Stream<PushMessageStatus> get onMessageStatus;
+
+  List<Map<String, dynamic>> get messages;
+
+  PushMessageStatus? get pushMessageStatus;
+
   Future<bool> wasAppOpenedByPush();
 
   Future<bool> isLastOpenedPushViewed();
 
   Future<void> markLastOpenedPushAsViewed();
+
+  Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData;
+
+  Stream<Map<String, dynamic>> get onMessageReceived;
+
+  Future<void> checkNotificationStatus();
 }
 
+enum PushMessageStatus {
+  /// Уведомления разрешены.
+  authorized,
 
+  /// Уведомления запрещены.
+  denied,
 
+  /// Пользователь не выбрал разрешение на уведомления.
+  notDetermined,
+
+  /// Уведомления разрешены, но не всплывают на экране.
+  provisional,
+}

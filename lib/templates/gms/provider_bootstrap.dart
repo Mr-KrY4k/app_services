@@ -17,21 +17,19 @@ import 'gms_remote_config_adapter.dart';
   AnalyticsApi,
   RemoteConfigApi,
   Future<void> Function(void Function()?),
-) ///
-    createProviderAdapters() =>
-        (
-          GmsMessagingAdapter(),
-          GmsAdsAdapter(),
-          GmsAnalyticsAdapter(),
-          GmsRemoteConfigAdapter(),
-          (onPushBlocked) async {
-            final result = await GmsServices.instance.init(
-              onPushBlocked: onPushBlocked,
-            );
-            if (!result.success) {
-              // TODO: обработка/логирование
-            }
-          },
-        );
-
-
+)
+///
+createProviderAdapters() => (
+  GmsMessagingAdapter(),
+  GmsAdsAdapter(),
+  GmsAnalyticsAdapter(),
+  GmsRemoteConfigAdapter(),
+  (onPushBlocked) async {
+    final result = await GmsServices.instance.init(
+      onPushBlocked: onPushBlocked,
+    );
+    if (!result.success) {
+      // TODO: обработка/логирование
+    }
+  },
+);
