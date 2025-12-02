@@ -11,8 +11,18 @@ class GmsMessagingAdapter implements MessagingApi {
   }
 
   @override
+  List<Map<String, dynamic>> get messages => GmsServices
+      .instance
+      .messaging
+      .messages
+      .map((message) => message.toMap())
+      .toList();
+
+  @override
   Stream<Map<String, dynamic>> get onMessage => GmsServices
-      .instance.messaging.onMessageReceived
+      .instance
+      .messaging
+      .onMessageReceived
       .map((remoteMessage) => remoteMessage.toMap());
 
   @override
@@ -27,5 +37,3 @@ class GmsMessagingAdapter implements MessagingApi {
   Future<void> markLastOpenedPushAsViewed() =>
       GmsServices.instance.messaging.markLastOpenedPushAsViewed();
 }
-
-

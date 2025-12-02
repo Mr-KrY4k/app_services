@@ -11,12 +11,19 @@ class HmsMessagingAdapter implements MessagingApi {
   }
 
   @override
-  Stream<Map<String, dynamic>> get onMessage =>
-      HmsServices.instance.messaging.onMessageReceived.map(
-        (raw) => raw.map(
-          (key, value) => MapEntry(key.toString(), value),
-        ),
-      );
+  List<Map<String, dynamic>> get messages => HmsServices
+      .instance
+      .messaging
+      .messages
+      .map((message) => message)
+      .toList();
+
+  @override
+  Stream<Map<String, dynamic>> get onMessage => HmsServices
+      .instance
+      .messaging
+      .onMessageReceived
+      .map((raw) => raw.map((key, value) => MapEntry(key.toString(), value)));
 
   @override
   Future<bool> wasAppOpenedByPush() =>
@@ -30,5 +37,3 @@ class HmsMessagingAdapter implements MessagingApi {
   Future<void> markLastOpenedPushAsViewed() =>
       HmsServices.instance.messaging.markLastOpenedPushAsViewed();
 }
-
-
