@@ -60,4 +60,8 @@ class GmsMessagingAdapter implements MessagingApi {
       .messaging
       .onMessageReceived
       .map((remoteMessage) => remoteMessage.toMap());
+
+  @override
+  Future<void> checkNotificationStatus() async =>
+      GmsServices.instance.messaging.checkNotificationStatus();
 }

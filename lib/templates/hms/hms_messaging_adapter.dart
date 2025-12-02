@@ -59,4 +59,8 @@ class HmsMessagingAdapter implements MessagingApi {
       .messaging
       .onMessageReceived
       .map((raw) => raw.map((key, value) => MapEntry(key.toString(), value)));
+
+  @override
+  Future<void> checkNotificationStatus() async =>
+      HmsServices.instance.messaging.checkNotificationStatus();
 }

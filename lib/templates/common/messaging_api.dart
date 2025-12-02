@@ -18,6 +18,8 @@ abstract class MessagingApi {
   Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData;
 
   Stream<Map<String, dynamic>> get onMessageReceived;
+
+  Future<void> checkNotificationStatus();
 }
 
 enum PushMessageStatus {
