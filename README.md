@@ -19,7 +19,7 @@ dependencies:
   app_services:
     git:
       url: git@github.com:your-org/app_services.git
-      ref: dev
+      ref: main
 ```
 
 Затем выполните:
@@ -83,7 +83,7 @@ dart run app_services
          gms_services:
            git:
              url: https://github.com/Mr-KrY4k/gms_services.git
-             ref: dev
+             ref: main
        ```
 
      - зависимость `hms_services` удаляется, если была;
@@ -96,7 +96,7 @@ dart run app_services
          hms_services:
            git:
              url: https://github.com/Mr-KrY4k/hms_services.git
-             ref: dev
+             ref: main
        ```
 
      - зависимость `gms_services` удаляется, если была.

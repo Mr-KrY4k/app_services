@@ -383,13 +383,13 @@ bool _updatePubspecFor({
       _Plugin.gms => {
           'git': {
             'url': 'https://github.com/Mr-KrY4k/gms_services.git',
-            'ref': 'dev',
+            'ref': 'main',
           },
         },
       _Plugin.hms => {
           'git': {
             'url': 'https://github.com/Mr-KrY4k/hms_services.git',
-            'ref': 'dev',
+            'ref': 'main',
           },
         },
     };
