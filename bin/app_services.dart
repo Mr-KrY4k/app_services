@@ -234,6 +234,10 @@ Future<bool> _ensureAppServicesTemplates({
       packagePath: 'templates/common/remote_config_api.dart',
       projectPath: '${libDir.path}/remote_config_api.dart',
     );
+    await _copyTemplate(
+      packagePath: 'templates/common/push_message_data.dart',
+      projectPath: '${libDir.path}/push_message_data.dart',
+    );
 
     // Провайдер‑специфичные файлы
     switch (selected) {
@@ -471,18 +475,19 @@ bool _removeAppServicesTemplates({required String projectRoot}) {
     const knownFiles = <String>[
       'messaging_api.dart',
       'ads_api.dart',
-       'analytics_api.dart',
-       'remote_config_api.dart',
+      'analytics_api.dart',
+      'remote_config_api.dart',
+      'push_message_data.dart',
       'app_services.dart',
       'provider_bootstrap.dart',
       'gms_messaging_adapter.dart',
       'gms_ads_adapter.dart',
-       'gms_analytics_adapter.dart',
-       'gms_remote_config_adapter.dart',
+      'gms_analytics_adapter.dart',
+      'gms_remote_config_adapter.dart',
       'hms_messaging_adapter.dart',
       'hms_ads_adapter.dart',
-       'hms_analytics_adapter.dart',
-       'hms_remote_config_adapter.dart',
+      'hms_analytics_adapter.dart',
+      'hms_remote_config_adapter.dart',
     ];
 
     for (final name in knownFiles) {

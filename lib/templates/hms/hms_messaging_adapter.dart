@@ -5,6 +5,7 @@
 import 'package:hms_services/hms_services.dart';
 
 import 'messaging_api.dart';
+import 'push_message_data.dart';
 
 class HmsMessagingAdapter implements MessagingApi {
   @override
@@ -13,21 +14,27 @@ class HmsMessagingAdapter implements MessagingApi {
   }
 
   @override
-  List<Map<String, dynamic>> get messages => HmsServices
+  List<PushMessageData> get messages => HmsServices
       .instance
       .messaging
       .messages
-      .map<Map<String, dynamic>>(
-        (raw) => raw.map((key, value) => MapEntry(key.toString(), value)),
+      .map<PushMessageData>(
+        (raw) => PushMessageData.fromMap(
+          raw.map((key, value) => MapEntry(key.toString(), value)),
+        ),
       )
       .toList();
 
   @override
-  Stream<Map<String, dynamic>> get onMessage => HmsServices
+  Stream<PushMessageData> get onMessage => HmsServices
       .instance
       .messaging
       .onMessageReceived
-      .map((raw) => raw.map((key, value) => MapEntry(key.toString(), value)));
+      .map(
+        (raw) => PushMessageData.fromMap(
+          raw.map((key, value) => MapEntry(key.toString(), value)),
+        ),
+      );
 
   @override
   Future<bool> wasAppOpenedByPush() =>
@@ -71,21 +78,27 @@ class HmsMessagingAdapter implements MessagingApi {
   PushMessageStatus? get pushMessageStatus => _lastStatus;
 
   @override
-  Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData async {
+  Future<PushMessageData?> get lastOpenedPushWith24HoursData async {
     final raw = await HmsServices.instance.messaging
         .getLastOpenedPushWithin24Hours();
     if (raw == null) {
       return null;
     }
-    return raw.map((key, value) => MapEntry(key.toString(), value));
+    return PushMessageData.fromMap(
+      raw.map((key, value) => MapEntry(key.toString(), value)),
+    );
   }
 
   @override
-  Stream<Map<String, dynamic>> get onMessageReceived => HmsServices
+  Stream<PushMessageData> get onMessageReceived => HmsServices
       .instance
       .messaging
       .onMessageReceived
-      .map((raw) => raw.map((key, value) => MapEntry(key.toString(), value)));
+      .map(
+        (raw) => PushMessageData.fromMap(
+          raw.map((key, value) => MapEntry(key.toString(), value)),
+        ),
+      );
 
   @override
   Future<void> checkNotificationStatus() async {

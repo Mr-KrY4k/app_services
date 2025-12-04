@@ -1,11 +1,13 @@
+import 'push_message_data.dart';
+
 abstract class MessagingApi {
   Future<String?> get token;
 
-  Stream<Map<String, dynamic>> get onMessage;
+  Stream<PushMessageData> get onMessage;
 
   Stream<PushMessageStatus> get onMessageStatus;
 
-  List<Map<String, dynamic>> get messages;
+  List<PushMessageData> get messages;
 
   PushMessageStatus? get pushMessageStatus;
 
@@ -15,9 +17,9 @@ abstract class MessagingApi {
 
   Future<void> markLastOpenedPushAsViewed();
 
-  Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData;
+  Future<PushMessageData?> get lastOpenedPushWith24HoursData;
 
-  Stream<Map<String, dynamic>> get onMessageReceived;
+  Stream<PushMessageData> get onMessageReceived;
 
   Future<void> checkNotificationStatus();
 }

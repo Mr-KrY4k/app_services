@@ -5,6 +5,7 @@
 import 'package:gms_services/gms_services.dart';
 
 import 'messaging_api.dart';
+import 'push_message_data.dart';
 
 class GmsMessagingAdapter implements MessagingApi {
   @override
@@ -13,19 +14,16 @@ class GmsMessagingAdapter implements MessagingApi {
   }
 
   @override
-  List<Map<String, dynamic>> get messages => GmsServices
-      .instance
-      .messaging
-      .messages
-      .map((message) => message.toMap())
+  List<PushMessageData> get messages => GmsServices.instance.messaging.messages
+      .map(
+        (message) => PushMessageData.fromMap(message.toMap()),
+      )
       .toList();
 
   @override
-  Stream<Map<String, dynamic>> get onMessage => GmsServices
-      .instance
-      .messaging
-      .onMessageReceived
-      .map((remoteMessage) => remoteMessage.toMap());
+  Stream<PushMessageData> get onMessage => GmsServices
+      .instance.messaging.onMessageReceived
+      .map((remoteMessage) => PushMessageData.fromMap(remoteMessage.toMap()));
 
   @override
   PushMessageStatus? get pushMessageStatus =>
@@ -53,16 +51,19 @@ class GmsMessagingAdapter implements MessagingApi {
       );
 
   @override
-  Future<Map<String, dynamic>?> get lastOpenedPushWith24HoursData async =>
-      (await GmsServices.instance.messaging.getLastOpenedPushWithin24Hours())
-          ?.toMap();
+  Future<PushMessageData?> get lastOpenedPushWith24HoursData async {
+    final msg =
+        await GmsServices.instance.messaging.getLastOpenedPushWithin24Hours();
+    if (msg == null) {
+      return null;
+    }
+    return PushMessageData.fromMap(msg.toMap());
+  }
 
   @override
-  Stream<Map<String, dynamic>> get onMessageReceived => GmsServices
-      .instance
-      .messaging
-      .onMessageReceived
-      .map((remoteMessage) => remoteMessage.toMap());
+  Stream<PushMessageData> get onMessageReceived => GmsServices
+      .instance.messaging.onMessageReceived
+      .map((remoteMessage) => PushMessageData.fromMap(remoteMessage.toMap()));
 
   @override
   Future<void> checkNotificationStatus() async =>
