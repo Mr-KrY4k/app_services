@@ -23,7 +23,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.2"
   async:
     dependency: transitive
     description:
@@ -250,14 +250,14 @@ packages:
     source: sdk
     version: "0.0.0"
   gms_services:
-    dependency: transitive
+    dependency: "direct main"
     description:
       path: "."
       ref: main
-      resolved-ref: d0462c5e9bf485fc46bfcf2ab3faf89706411614
+      resolved-ref: "0251c6434356e9ab0e1d2ae1ba90c6ddf3ff2d76"
       url: "https://github.com/Mr-KrY4k/gms_services.git"
     source: git
-    version: "0.0.1"
+    version: "0.0.2"
   hive_ce:
     dependency: transitive
     description:
@@ -267,11 +267,11 @@ packages:
     source: hosted
     version: "2.15.1"
   hms_services:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "."
       ref: main
-      resolved-ref: "9a3b62c8205a9aee170e5cea8dc8d1e2017b5213"
+      resolved-ref: b628fe46eb2efd965cf3e078d758f131560c825f
       url: "https://github.com/Mr-KrY4k/hms_services.git"
     source: git
     version: "0.0.1"
@@ -506,6 +506,62 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.5"
+  shared_preferences:
+    dependency: transitive
+    description:
+      name: shared_preferences
+      sha256: "6e8bf70b7fef813df4e9a36f658ac46d107db4b4cfe1048b477d4e453a8159f5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.3"
+  shared_preferences_android:
+    dependency: transitive
+    description:
+      name: shared_preferences_android
+      sha256: "83af5c682796c0f7719c2bbf74792d113e40ae97981b8f266fa84574573556bc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.18"
+  shared_preferences_foundation:
+    dependency: transitive
+    description:
+      name: shared_preferences_foundation
+      sha256: "4e7eaffc2b17ba398759f1151415869a34771ba11ebbccd1b0145472a619a64f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.6"
+  shared_preferences_linux:
+    dependency: transitive
+    description:
+      name: shared_preferences_linux
+      sha256: "580abfd40f415611503cae30adf626e6656dfb2f0cee8f465ece7b6defb40f2f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
+  shared_preferences_platform_interface:
+    dependency: transitive
+    description:
+      name: shared_preferences_platform_interface
+      sha256: "57cbf196c486bc2cf1f02b85784932c6094376284b3ad5779d1b1c6c6a816b80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
+  shared_preferences_web:
+    dependency: transitive
+    description:
+      name: shared_preferences_web
+      sha256: c49bd060261c9a3f0ff445892695d6212ff603ef3115edbb448509d407600019
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.3"
+  shared_preferences_windows:
+    dependency: transitive
+    description:
+      name: shared_preferences_windows
+      sha256: "94ef0f72b2d71bc3e700e025db3710911bd51a71cefb65cc609dd0d9a982e3c1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -627,10 +683,10 @@ packages:
     dependency: transitive
     description:
       name: yaml_edit
-      sha256: fb38626579fb345ad00e674e2af3a5c9b0cc4b9bfb8fd7f7ff322c7c9e62aef5
+      sha256: ec709065bb2c911b336853b67f3732dd13e0336bd065cc2f1061d7610ddf45e3
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.2"
+    version: "2.2.3"
 sdks:
   dart: ">=3.10.1 <4.0.0"
   flutter: ">=3.35.0"
